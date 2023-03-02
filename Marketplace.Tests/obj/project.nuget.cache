@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "fMGWdidWOuBeeFrdkgmGei3lduVVJX0ckxzNsxbPRB3AZT0jEgdm20omxSLUkgI4tLHzR3yBfZa7scPwwHghzQ==",
+  "success": true,
+  "projectFilePath": "C:\\dev\\Marketplace\\Marketplace.Tests\\Marketplace.Tests.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\osund\\.nuget\\packages\\nunit\\2.6.4\\nunit.2.6.4.nupkg.sha512",
+    "C:\\Users\\osund\\.nuget\\packages\\xamarin.uitest\\2.2.4\\xamarin.uitest.2.2.4.nupkg.sha512"
+  ],
+  "logs": []
+}
