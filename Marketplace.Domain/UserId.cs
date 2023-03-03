@@ -1,6 +1,6 @@
 ﻿namespace Marketplace.Domain;
 
-public class UserId
+public record UserId
 {
     private readonly Guid _value;
 
