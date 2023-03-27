@@ -1,11 +1,15 @@
+using System.Globalization;
+
 namespace Marketplace.Domain;
 
 public record Money
 {
     private const string DefaultCurrency = "EUR";
     // factories
-    public static Money FromDecimal(decimal amount, string currency, ICurrencyLookup currencyLookup) => new Money(amount, currency, currencyLookup);
-    public static Money FromString(string amount, string currency, ICurrencyLookup currencyLookup) => new Money(decimal.Parse(amount), currency, currencyLookup);
+    public static Money FromDecimal(decimal amount, string currency, ICurrencyLookup currencyLookup) => 
+        new Money(amount, currency, currencyLookup);
+    public static Money FromString(string amount, string currency, ICurrencyLookup currencyLookup) => 
+        new Money(decimal.Parse(amount, CultureInfo.GetCultureInfo("en-US")), currency, currencyLookup);
 
     protected Money(decimal amount, string currencyCode, ICurrencyLookup currencyLookup)
     {
