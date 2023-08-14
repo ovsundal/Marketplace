@@ -8,7 +8,7 @@ public record ClassifiedAdId
     {
         if (value == default)
         {
-            throw new ArgumentException(nameof(value), "Classified Ad id cannot be empty");
+            throw new ArgumentNullException(nameof(value), "Classified Ad id cannot be empty");
         }
 
         _value = value;

@@ -2,20 +2,49 @@
 
 public class ClassifiedAd
 {
-    public Guid Id { get; }
-    private UserId _ownerId;
+    public ClassifiedAdId Id { get; }
 
-    public ClassifiedAd(Guid id, UserId ownerId)
+    public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
     {
         Id = id; // validation check for ad id moved to valueobject ClassifiedAdId
-        _ownerId = ownerId; // validation check for ownerId moved to valueobject UserId
+        OwnerId = ownerId; // validation check for ownerId moved to valueobject UserId
+        State = ClassifiedAdState.Inactive;
     }
 
-    public void SetTitle(string title) => _title = title;
-    public void UpdateText(string text) => _text = text;
-    public void UpdatePrice(decimal price) => _price = price;
+    public void SetTitle(ClassifiedAdTitle title) => Title = title;
+    public void UpdateText(ClassifiedAdText text) => Text = text;
+    public void UpdatePrice(Price price) => Price = price;
+    public void RequestToPublish() {
+        if (Title == null)
+        {
+            throw new InvalidEntityStateException(this, "title cannot be empty");
+        }
 
-    private string _title;
-    private string _text;
-    private decimal _price;
+        if (Text == null)
+        {
+            throw new InvalidEntityStateException(this, "text cannot be empty");
+        }
+
+        if (Price?.Amount == 0)
+        {
+            throw new InvalidEntityStateException(this, "price cannot be zero");
+        }
+        State = ClassifiedAdState.PendingReview;
+    }
+
+
+    public UserId OwnerId {get;}
+    public ClassifiedAdTitle Title { get; private set; }
+    public ClassifiedAdText Text { get; private set; }
+    public Price Price { get; private set; }
+    public ClassifiedAdState State { get; private set; }
+    public UserId ApprovedBy { get; private set; }
+
+    public enum ClassifiedAdState
+    {
+        PendingReview,
+        Active,
+        Inactive,
+        MarkedAsSold
+    }
 }
