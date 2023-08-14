@@ -9,11 +9,24 @@ public class ClassifiedAd
         Id = id; // validation check for ad id moved to valueobject ClassifiedAdId
         OwnerId = ownerId; // validation check for ownerId moved to valueobject UserId
         State = ClassifiedAdState.Inactive;
+        EnsureValidState();
     }
 
-    public void SetTitle(ClassifiedAdTitle title) => Title = title;
-    public void UpdateText(ClassifiedAdText text) => Text = text;
-    public void UpdatePrice(Price price) => Price = price;
+    public void SetTitle(ClassifiedAdTitle title)
+    {
+        Title = title;
+        EnsureValidState();
+    }
+
+    public void UpdateText(ClassifiedAdText text)
+    {
+        Text = text;
+        EnsureValidState();
+    }
+    public void UpdatePrice(Price price) {
+        Price = price;
+        EnsureValidState();
+    }
     public void RequestToPublish() {
         if (Title == null)
         {
@@ -30,6 +43,27 @@ public class ClassifiedAd
             throw new InvalidEntityStateException(this, "price cannot be zero");
         }
         State = ClassifiedAdState.PendingReview;
+        EnsureValidState();
+    }
+
+    protected void EnsureValidState()
+    {
+        var valid = Id != null && OwnerId != null && (State switch
+        {
+            ClassifiedAdState.PendingReview => Title != null
+                                               && Text != null
+                                               && Price?.Amount > 0,
+            ClassifiedAdState.Active => Title != null
+                                        && Text != null
+                                        && Price?.Amount > 0
+                                        && ApprovedBy != null,
+            _ => true
+        });
+
+        if (!valid)
+        {
+            throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}");
+        }
     }
 
 
