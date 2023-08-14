@@ -5,6 +5,6 @@
 # Ignore build output
 [Bb]in/
 [Oo]bj/
-/Marketplace.Domain/obj/
-/Marketplace.Framework/obj/
-/Marketplace.Test/obj/
+/Marketplace.Domain/obj
+/Marketplace.Framework/obj
+/Marketplace.Test/obj
