@@ -18,4 +18,8 @@
       <None Remove="obj\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Marketplace.Framework\Marketplace.Framework.csproj" />
+    </ItemGroup>
+
 </Project>
