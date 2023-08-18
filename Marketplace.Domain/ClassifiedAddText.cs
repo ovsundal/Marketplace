@@ -1,8 +1,9 @@
 using System.Security.AccessControl;
+using Marketplace.Framework;
 
 namespace Marketplace.Domain;
 
-public class ClassifiedAdText
+public class ClassifiedAdText : Value<ClassifiedAdText>
 {
     public string Value { get; }
     internal ClassifiedAdText(string text) => Value = text;

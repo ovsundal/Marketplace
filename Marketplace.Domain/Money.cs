@@ -1,14 +1,15 @@
 using System.Globalization;
+using Marketplace.Framework;
 
 namespace Marketplace.Domain;
 
-public record Money
+public class Money : Value<Money>
 {
     private const string DefaultCurrency = "EUR";
     // factories
-    public static Money FromDecimal(decimal amount, string currency, ICurrencyLookup currencyLookup) => 
+    public static Money FromDecimal(decimal amount, string currency, ICurrencyLookup currencyLookup) =>
         new Money(amount, currency, currencyLookup);
-    public static Money FromString(string amount, string currency, ICurrencyLookup currencyLookup) => 
+    public static Money FromString(string amount, string currency, ICurrencyLookup currencyLookup) =>
         new Money(decimal.Parse(amount, CultureInfo.GetCultureInfo("en-US")), currency, currencyLookup);
 
     protected Money(decimal amount, string currencyCode, ICurrencyLookup currencyLookup)
@@ -24,7 +25,7 @@ public record Money
         {
             throw new ArgumentException($"Currency {currencyCode} is not valid");
         }
-        
+
         if (decimal.Round(amount, 2) != amount)
         {
             throw new ArgumentOutOfRangeException(nameof(amount), $"Amount cannot have more than {currency.DecimalPlaces} decimal places");
@@ -34,14 +35,14 @@ public record Money
         Currency = currency;
     }
 
-    private Money(decimal amount, CurrencyDetails currency)
+    protected Money(decimal amount, Currency currency)
     {
         Amount = amount;
         Currency = currency;
     }
 
     public decimal Amount { get; }
-    public CurrencyDetails Currency { get; }
+    public Currency Currency { get; }
 
     public Money Add(Money summand)
     {
