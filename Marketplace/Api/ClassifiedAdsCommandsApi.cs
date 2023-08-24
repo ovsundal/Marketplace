@@ -1,3 +1,4 @@
+using static Marketplace.Contracts.ClassifiedAds;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.Api;
@@ -11,10 +12,42 @@ public class ClassifiedAdsCommandsApi : Controller
 
     [HttpPost]
     public async Task<IActionResult> Post(
-        Contracts.ClassifiedAds.V1.Create request)
+        V1.Create request)
     {
-        _applicationService.Handle(request);
+        await _applicationService.Handle(request);
 
+        return Ok();
+    }
+
+    [Route("name")]
+    [HttpPut]
+    public async Task<IActionResult> Put(V1.SetTitle request)
+    {
+        await _applicationService.Handle(request);
+        return Ok();
+    }
+
+    [Route("text")]
+    [HttpPut]
+    public async Task<IActionResult> Put(V1.UpdateText request)
+    {
+        await _applicationService.Handle(request);
+        return Ok();
+    }
+
+    [Route("price")]
+    [HttpPut]
+    public async Task<IActionResult> Put(V1.UpdatePrice request)
+    {
+        await _applicationService.Handle(request);
+        return Ok();
+    }
+
+    [Route("publish")]
+    [HttpPut]
+    public async Task<IActionResult> Put(V1.RequestToPublish request)
+    {
+        await _applicationService.Handle(request);
         return Ok();
     }
 }

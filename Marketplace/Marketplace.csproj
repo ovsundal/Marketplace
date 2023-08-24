@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
+      <ProjectReference Include="..\Marketplace.Framework\Marketplace.Framework.csproj" />
     </ItemGroup>
 
 </Project>

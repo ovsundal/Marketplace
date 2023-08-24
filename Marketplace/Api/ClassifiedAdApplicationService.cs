@@ -1,9 +1,21 @@
+using Marketplace.Contracts;
+using Marketplace.Framework;
+
 namespace Marketplace.Api;
 
-public class ClassifiedAdApplicationService
+public class ClassifiedAdApplicationService : IApplicationService
 {
-    public void Handle(Contracts.ClassifiedAds.V1.Create command)
+    public Task Handle(object command)
     {
-        // handle command
+        switch (command)
+        {
+            case ClassifiedAds.V1.Create cmd:
+                // create new Classified ad here
+                break;
+            
+            default:
+                throw new InvalidOperationException($"Command type {command.GetType().FullName} is unknown");
+        }
+        throw new NotImplementedException();
     }
 }
