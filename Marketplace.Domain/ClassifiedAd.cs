@@ -2,7 +2,7 @@
 
 namespace Marketplace.Domain;
 
-public class ClassifiedAd : Entity
+public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
 {
     public ClassifiedAdId Id { get; private set;}
     public UserId OwnerId {get; private set;}
@@ -11,49 +11,75 @@ public class ClassifiedAd : Entity
     public Price Price { get; private set; }
     public ClassifiedAdState State { get; private set; }
     public UserId ApprovedBy { get; private set; }
+    public List<Picture> Pictures { get; private set; }
 
-    public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
-    {
-        Id = id; // validation check for ad id moved to value object ClassifiedAdId
-        OwnerId = ownerId; // validation check for ownerId moved to value object UserId
-        State = ClassifiedAdState.Inactive;
-        Apply(new Events.ClassifiedAdCreated
+        public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
         {
-            Id = id,
-            OwnerId = ownerId
-        });
-    }
+            Pictures = new List<Picture>();
+            Apply(
+                new Events.ClassifiedAdCreated
+                {
+                    Id = id,
+                    OwnerId = ownerId
+                }
+            );
+        }
 
-    public void SetTitle(ClassifiedAdTitle title)
-    {
+    public void SetTitle(ClassifiedAdTitle title) =>
         Apply(new Events.ClassifiedAdTitleChanged
         {
             Id = Id,
             Title = title
         });
-    }
 
-    public void UpdateText(ClassifiedAdText text)
-    {
+    public void UpdateText(ClassifiedAdText text) =>
         Apply(new Events.ClassifiedAdTextUpdated
         {
             Id = Id,
             AdText = text
         });
-    }
-    public void UpdatePrice(Price price) {
+    public void UpdatePrice(Price price) =>
         Apply(new Events.ClassifiedAdPriceUpdated
         {
             Id = Id,
             Price = price.Amount,
             CurrencyCode = price.Currency.CurrencyCode
         });
-    }
-    public void RequestToPublish() {
+
+    public void RequestToPublish() =>
         Apply(new Events.ClassifiedAdSentForReview
         {
             Id = Id
         });
+
+    public void AddPicture(Uri pictureUri, PictureSize size)
+    {
+
+        Apply(new Events.PictureAddedToAClassifiedAd
+        {
+            PictureId = new Guid(),
+            ClassifiedAdId = Id,
+            Url = pictureUri.ToString(),
+            Height = size.Height,
+            Width = size.Width,
+            Order = NewPictureOrder()
+        });
+
+        int NewPictureOrder()
+            => Pictures.Any()
+                ? Pictures.Max(x => x.Order) + 1
+                : 0;
+    }
+
+    public void ResizePicture(PictureId pictureId, PictureSize newSize)
+    {
+        var picture = FindPicture(pictureId);
+        if (picture == null)
+        {
+            throw new InvalidOperationException("Cannot resize a picture that I don't have");
+        }
+
+        picture.Resize(newSize);
     }
 
     protected override void When(object @event)
@@ -77,31 +103,44 @@ public class ClassifiedAd : Entity
             case Events.ClassifiedAdSentForReview e:
                 State = ClassifiedAdState.PendingReview;
                 break;
+            case Events.PictureAddedToAClassifiedAd e:
+                var newPicture = new Picture(Apply);
+                Pictures.Add(newPicture);
+                break;
         }
     }
 
-    protected override void EnsureValidState()
-    {
-        var valid =
-            Id != null &&
-            OwnerId != null &&
-            (State switch
-        {
-            ClassifiedAdState.PendingReview => Title != null
-                                               && Text != null
-                                               && Price?.Amount > 0,
-            ClassifiedAdState.Active => Title != null
-                                        && Text != null
-                                        && Price?.Amount > 0
-                                        && ApprovedBy != null,
-            _ => true
-        });
+    private Picture FindPicture(PictureId id) => Pictures.FirstOrDefault(x => x.Id == id);
 
-        if (!valid)
+    private Picture FirstPicture => Pictures.OrderBy(x => x.Order).FirstOrDefault();
+
+        protected override void EnsureValidState()
         {
-            throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}");
+            var valid =
+                Id != null &&
+                OwnerId != null &&
+                (State switch
+                {
+                    ClassifiedAdState.PendingReview =>
+                        Title != null
+                        && Text != null
+                        && Price?.Amount > 0
+                        && FirstPicture.HasCorrectSize(),
+                    ClassifiedAdState.Active =>
+                        Title != null
+                        && Text != null
+                        && Price?.Amount > 0
+                        && FirstPicture.HasCorrectSize()
+                        && ApprovedBy != null,
+                    _ => true
+                });
+
+            if (!valid)
+                throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}");
         }
-    }
+
+
+
 
     public enum ClassifiedAdState
     {
