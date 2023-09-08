@@ -41,6 +41,9 @@ public class Money : Value<Money>
         Currency = currency;
     }
 
+    // satisfy the serialization requirements
+    protected Money() { }
+
     public decimal Amount { get; }
     public Currency Currency { get; }
 

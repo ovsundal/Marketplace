@@ -4,13 +4,13 @@ using static Marketplace.Contracts.ClassifiedAds;
 
 namespace Marketplace.Api;
 
-public class ClassifiedAdApplicationService : IApplicationService
+public class ClassifiedAdsApplicationService : IApplicationService
 {
     private readonly IClassifiedAdRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ICurrencyLookup _currencyLookup;
 
-    public ClassifiedAdApplicationService(IClassifiedAdRepository repository, IUnitOfWork unitOfWork, ICurrencyLookup currencyLookup)
+    public ClassifiedAdsApplicationService(IClassifiedAdRepository repository, IUnitOfWork unitOfWork, ICurrencyLookup currencyLookup)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
@@ -58,7 +58,6 @@ public class ClassifiedAdApplicationService : IApplicationService
 
             operation(classifiedAd);
 
-            await _repository.Add(classifiedAd);
             await _unitOfWork.Commit();
         }
     }

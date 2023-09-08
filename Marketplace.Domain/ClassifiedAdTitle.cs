@@ -11,6 +11,9 @@ public class ClassifiedAdTitle : Value<ClassifiedAdTitle>
         return new ClassifiedAdTitle(title);
     }
 
+    // satisfy the serialization requirements
+    protected ClassifiedAdTitle() { }
+
     public static ClassifiedAdTitle FromHtml(string htmlTitle) // factory function that converts HTML to the value object instance
     {
         var supportedTagsReplaced = htmlTitle

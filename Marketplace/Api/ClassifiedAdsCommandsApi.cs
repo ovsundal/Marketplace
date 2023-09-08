@@ -1,53 +1,49 @@
 using static Marketplace.Contracts.ClassifiedAds;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace Marketplace.Api;
 
 [Route("/ad")]
 public class ClassifiedAdsCommandsApi : Controller
 {
-    private readonly ClassifiedAdApplicationService _applicationService;
-    public ClassifiedAdsCommandsApi(ClassifiedAdApplicationService applicationService)
+    private readonly ClassifiedAdsApplicationService _applicationService;
+
+    public ClassifiedAdsCommandsApi(ClassifiedAdsApplicationService applicationService)
         => _applicationService = applicationService;
 
     [HttpPost]
-    public async Task<IActionResult> Post(
-        V1.Create request)
-    {
-        await _applicationService.Handle(request);
-
-        return Ok();
-    }
+    public Task<IActionResult> Post(
+        V1.Create request) => HandleRequest(request, _applicationService.Handle);
 
     [Route("name")]
     [HttpPut]
-    public async Task<IActionResult> Put(V1.SetTitle request)
-    {
-        await _applicationService.Handle(request);
-        return Ok();
-    }
+    public Task<IActionResult> Put(V1.SetTitle request) => HandleRequest(request, _applicationService.Handle);
 
     [Route("text")]
     [HttpPut]
-    public async Task<IActionResult> Put(V1.UpdateText request)
-    {
-        await _applicationService.Handle(request);
-        return Ok();
-    }
+    public Task<IActionResult> Put(V1.UpdateText request) => HandleRequest(request, _applicationService.Handle);
 
     [Route("price")]
     [HttpPut]
-    public async Task<IActionResult> Put(V1.UpdatePrice request)
-    {
-        await _applicationService.Handle(request);
-        return Ok();
-    }
+    public Task<IActionResult> Put(V1.UpdatePrice request) => HandleRequest(request, _applicationService.Handle);
 
     [Route("publish")]
     [HttpPut]
-    public async Task<IActionResult> Put(V1.RequestToPublish request)
+    public Task<IActionResult> Put(V1.RequestToPublish request) => HandleRequest(request, _applicationService.Handle);
+
+    private async Task<IActionResult> HandleRequest<T>(T request, Func<T, Task> handler)
     {
-        await _applicationService.Handle(request);
-        return Ok();
+        try
+        {
+            Log.Debug("Handling HTTP request of type {type}", typeof(T).Name);
+            await handler(request);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Error handling the request");
+            return new BadRequestObjectResult(new { error = e.Message, stackTrace = e.StackTrace });
+        }
     }
 }

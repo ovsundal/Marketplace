@@ -4,6 +4,11 @@ namespace Marketplace.Domain;
 
 public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
 {
+    private string DbId
+    {
+        get => $"ClassifiedAd/{Id}";
+        set {}
+    }
     public ClassifiedAdId Id { get; private set;}
     public UserId OwnerId {get; private set;}
     public ClassifiedAdTitle Title { get; private set; }

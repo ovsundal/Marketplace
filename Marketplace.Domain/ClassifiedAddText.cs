@@ -10,5 +10,8 @@ public class ClassifiedAdText : Value<ClassifiedAdText>
 
     public static ClassifiedAdText FromString(string text) => new ClassifiedAdText(text);
 
+    // satisfy the serialization requirements
+    protected ClassifiedAdText() { }
+
     public static implicit operator string(ClassifiedAdText text) => text.Value;
 }
