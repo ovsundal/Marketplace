@@ -4,11 +4,10 @@ namespace Marketplace.Domain;
 
 public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
 {
-    private string DbId
-    {
-        get => $"ClassifiedAd/{Id}";
-        set {}
-    }
+    // Properties to handle the persistence
+    public Guid ClassifiedAdId { get; private set; }
+    protected ClassifiedAd(){}
+
     public ClassifiedAdId Id { get; private set;}
     public UserId OwnerId {get; private set;}
     public ClassifiedAdTitle Title { get; private set; }
@@ -89,12 +88,15 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
 
     protected override void When(object @event)
     {
+        Picture picture;
         switch (@event)
         {
             case Events.ClassifiedAdCreated e:
                 Id = new ClassifiedAdId(e.Id);
                 OwnerId = new UserId(e.OwnerId);
                 State = ClassifiedAdState.Inactive;
+                // required for persistence
+                ClassifiedAdId = e.Id;
                 break;
             case Events.ClassifiedAdTitleChanged e:
                 Title = new ClassifiedAdTitle(e.Title);
