@@ -1,50 +1,41 @@
-using Marketplace;
-using Marketplace.Api;
-using Marketplace.Domain;
-using Marketplace.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Raven.Client.Documents;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using static System.Environment;
+using static System.Reflection.Assembly;
 
-var store = new DocumentStore
+namespace Marketplace
 {
-    Urls = new[] { "http://localhost:8080" },
-    Database = "Marketplace",
-    Conventions =
+    public static class Program
     {
-        FindIdentityProperty = m => m.Name == "_databaseId"
+        static Program() =>
+            CurrentDirectory = Path.GetDirectoryName(GetEntryAssembly().Location);
+
+        public static void Main(string[] args)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .MinimumLevel.Debug()
+                .CreateLogger();
+
+            var configuration = BuildConfiguration(args);
+
+            ConfigureWebHost(configuration).Build().Run();
+        }
+
+        private static IConfiguration BuildConfiguration(string[] args)
+            => new ConfigurationBuilder()
+                .SetBasePath(CurrentDirectory)
+                .Build();
+
+        private static IWebHostBuilder ConfigureWebHost(
+            IConfiguration configuration)
+            => new WebHostBuilder()
+                .UseStartup<Startup>()
+                .UseConfiguration(configuration)
+                .UseContentRoot(CurrentDirectory)
+                .UseSerilog()
+                .UseKestrel();
     }
-};
-store.Initialize();
-
-const string connectionString = "Host=localhost;Database=Marketplace;Username=ddd;Password=ddd";
-
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSingleton<ICurrencyLookup, FixedCurrencyLookup>();
-builder.Services.AddScoped(c => store.OpenAsyncSession());
-builder.Services.AddScoped<IUnitOfWork, RavenDbUnitOfWork>();
-builder.Services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
-builder.Services.AddScoped<ClassifiedAdsApplicationService>();
-builder.Services.AddSwaggerGen();
-builder.Services
-    .AddDbContext<ClassifiedAdDbContext>(options => options.UseNpgsql(connectionString));
-
-var app = builder.Build();
-app.EnsureDatabase();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-
-app.MapControllers();
-
-app.Run();

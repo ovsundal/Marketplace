@@ -6,6 +6,8 @@ public class ClassifiedAdId : Value<ClassifiedAdId>
 {
     public Guid Value { get; }
 
+    protected ClassifiedAdId() {}
+
     public ClassifiedAdId(Guid value)
     {
         if (value == default)

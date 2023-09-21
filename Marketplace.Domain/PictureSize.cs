@@ -6,6 +6,7 @@ public class PictureSize : Value<PictureSize>
 {
     public int Width { get; internal set; }
     public int Height { get; internal set; }
+    internal PictureSize(){}
 
     public PictureSize(int width, int height)
     {
@@ -21,5 +22,4 @@ public class PictureSize : Value<PictureSize>
         Height = height;
     }
 
-    internal PictureSize(){}
 }
