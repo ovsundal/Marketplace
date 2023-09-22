@@ -1,3 +1,5 @@
+using Marketplace.ClassifiedAd;
+
 namespace Marketplace.Infrastructure;
 
 public class EfCoreUnitOfWork : IUnitOfWork

@@ -1,8 +1,9 @@
-using static Marketplace.Contracts.ClassifiedAds;
+using Marketplace.ClassifiedAd;
+using static Marketplace.ClassifiedAd.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
-namespace Marketplace.Api;
+
 
 [Route("/ad")]
 public class ClassifiedAdsCommandsApi : Controller

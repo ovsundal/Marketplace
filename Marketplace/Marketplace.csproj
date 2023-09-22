@@ -23,4 +23,8 @@
       <ProjectReference Include="..\Marketplace.Framework\Marketplace.Framework.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Api\" />
+    </ItemGroup>
+
 </Project>
