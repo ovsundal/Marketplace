@@ -1,6 +1,8 @@
-﻿namespace Marketplace.Domain;
+﻿using Marketplace.Framework;
 
-public record UserId
+namespace Marketplace.Domain;
+
+public class UserId : Value<UserId>
 {
     protected UserId() {}
 

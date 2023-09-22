@@ -1,5 +1,3 @@
-using System.Security.AccessControl;
-
 namespace Marketplace.Domain.UserProfile;
 
 public static class Events
