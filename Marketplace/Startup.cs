@@ -27,7 +27,6 @@ namespace Marketplace
                 .AddDbContext<ClassifiedAdDbContext>(
                     options => options.UseNpgsql(connectionString));
 
-            services.AddSingleton<ICurrencyLookup, FixedCurrencyLookup>();
             services.AddScoped<IUnitOfWork, EfCoreUnitOfWork>();
             services.AddScoped<IClassifiedAdRepository, ClassifiedAdRepository>();
             services.AddScoped<ClassifiedAdsApplicationService>();
