@@ -1,4 +1,5 @@
-﻿using Marketplace.Framework;
+﻿using Marketplace.Domain.Shared;
+using Marketplace.Framework;
 
 namespace Marketplace.Domain;
 
@@ -143,7 +144,7 @@ public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
                 });
 
             if (!valid)
-                throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}");
+                throw new InvalidEntityState(this, $"Post-checks failed in state {State}");
         }
 
 

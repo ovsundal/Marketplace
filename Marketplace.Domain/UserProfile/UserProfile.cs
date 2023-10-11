@@ -1,3 +1,4 @@
+using Marketplace.Domain.Shared;
 using Marketplace.Framework;
 
 namespace Marketplace.Domain.UserProfile;

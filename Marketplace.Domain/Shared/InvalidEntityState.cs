@@ -1,8 +1,8 @@
 namespace Marketplace.Domain;
 
-public class InvalidEntityStateException : Exception
+public class InvalidEntityState : Exception
 {
-    public InvalidEntityStateException(object entity, string message)
+    public InvalidEntityState(object entity, string message)
         : base($"Entity {entity.GetType().Name} state change rejected, {message}")
     {
     }

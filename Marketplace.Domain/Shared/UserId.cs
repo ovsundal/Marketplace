@@ -1,6 +1,6 @@
 ﻿using Marketplace.Framework;
 
-namespace Marketplace.Domain;
+namespace Marketplace.Domain.Shared;
 
 public class UserId : Value<UserId>
 {
@@ -11,13 +11,13 @@ public class UserId : Value<UserId>
     public UserId(Guid value)
     {
         if (value == default)
-        {
-            throw new ArgumentException(nameof(value), "User id cannot be empty");
-        }
+            throw new ArgumentNullException(nameof(value), "User id cannot be empty");
 
         Value = value;
     }
-        public static implicit operator Guid(UserId self) => self.Value;
-        public static UserId NoUser =>
-            new UserId();
+
+    public static implicit operator Guid(UserId self) => self.Value;
+
+    public static UserId NoUser =>
+        new UserId();
 }

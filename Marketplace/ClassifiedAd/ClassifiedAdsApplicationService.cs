@@ -1,4 +1,5 @@
 using Marketplace.Domain;
+using Marketplace.Domain.Shared;
 using Marketplace.Framework;
 using static Marketplace.ClassifiedAd.Contracts;
 
